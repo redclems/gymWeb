@@ -1,3 +1,3 @@
-import detectionBras
+from detectionBras import detectionBras
 
-detectionBras(check_break_func, affichage=True)
+detectionBras( affichage=False)

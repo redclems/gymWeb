@@ -57,16 +57,24 @@ def lister_activiter_sans_fin():
 
     return mycursor.fetchall()
 
-def lister_activiter_sans_fin(id_action):
-    sql = """
-    SELECT *
-    FROM activiter
-    WHERE (date_fin IS NULL OR date_fin = 0) AND id_nom_action = %s
-    """
+def lister_activiter_sans_fin_id(id_action):
+    try:
+        if not isinstance(id_action, int):
+            raise ValueError("id_action doit être un entier")
+        sql = """
+        SELECT *
+        FROM activiter
+        WHERE (date_fin IS NULL OR date_fin = 0) and id_nom_action = %s
+        """
 
-    mycursor.execute(sql, (id_action))
+        mycursor.execute(sql, (id_action,))
 
-    return mycursor.fetchall()
+        return mycursor.fetchall()
+    except mysql.connector.Error as err:
+        print("Une erreur s'est produite lors de l'exécution de la requête MySQL:", err)
+        return None
+
+
 
 
 def arreter_activiter(id_personne, id_nom_action, date_debut):

@@ -4,7 +4,6 @@ import tkinter as tk
 import mediapipe as mp
 from tkinter import messagebox
 import sys
-import connexion
 
 #initializing mediapipe pose
 mp_pose = mp.solutions.pose
@@ -62,7 +61,6 @@ def visualizeAngle(frame, counters, upElements):
         else:
             cv.putText(frame , "DOWN", (70,60+(75*indice)),
                 cv.FONT_HERSHEY_SIMPLEX, 1.5, (255,255,255), 2, cv.LINE_AA)  
-    cv.imshow("mediapipe", frame)
 
 # fonction calcul de l'angle
 def calculAngle(a,b,c):
@@ -81,7 +79,7 @@ def on_closing():
     raise SystemExit()
 
 
-def detectionBras(check_break_func, affichage=True):
+def detectionBras(affichage=True):
     counter = [0] * 3
     upElement = [True] * 3 
 
@@ -130,8 +128,6 @@ def detectionBras(check_break_func, affichage=True):
                         counter[0]  -= 1
                         counter[1]  -= 1
                         counter[2]  += 1
-                        incr_les_activiters(0, -1)
-                        incr_les_activiters(1, -1)
                         incr_les_activiters(2, 1)
                 else:
                     upElement[2] = False
@@ -142,6 +138,7 @@ def detectionBras(check_break_func, affichage=True):
             else:
                 if(affichage):
                     cv.imshow("mouvement", frame)
+                    
 
             if cv.waitKey(1) == 27 or cv.waitKey(1) == ord('q'):
                 break
@@ -154,13 +151,13 @@ def detectionBras(check_break_func, affichage=True):
     cv.destroyAllWindows()
 
     return counter
-
+from connexion import lister_activiter_sans_fin_id, mettre_a_jour_activite
 def incr_les_activiters(activiter_id, val):
-    liste_act = lister_activiter_sans_fin(activiter_id)
+    liste_act = lister_activiter_sans_fin_id(activiter_id)
+    if (liste_act is not None):
+        for date_debut, id_personne, id_nom_action, _, compte in liste_act:
+            mettre_a_jour_activite(id_personne, id_nom_action, date_debut, compte + val)
 
-    for date_debut, id_personne, id_nom_action, _, compte in liste_act:
-        mettre_a_jour_activite(id_personne, id_nom_action, date_debut, compte + val)
 
-
-#counter = detectionBras(check_break_func, affichage=True)
-#print(counter)
+counter = detectionBras( affichage=True)
+print(counter)
