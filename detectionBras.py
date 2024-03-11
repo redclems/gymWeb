@@ -13,7 +13,6 @@ mp_drawing = mp.solutions.drawing_utils
 #setting up the pose function
 pose_video = mp_pose.Pose(static_image_mode = False, min_detection_confidence = 0.5, model_complexity = 1)
 
-
 # -----------------------Définition des fonctions --------------------------------
 #function detection pos
 def detectionPose(img, pose, mp_drawing, display = True):
@@ -152,10 +151,7 @@ def detectionBras(check_break_func, affichage=True):
 
     return counter
 
-def check_break_func():
-    return False
 
 
-counter = detectionBras(check_break_func, affichage=True)
-
-print(counter)
+#counter = detectionBras(check_break_func, affichage=True)
+#print(counter)
