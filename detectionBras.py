@@ -4,7 +4,7 @@ import tkinter as tk
 import mediapipe as mp
 from tkinter import messagebox
 import sys
-
+import connexion
 
 #initializing mediapipe pose
 mp_pose = mp.solutions.pose
@@ -116,6 +116,7 @@ def detectionBras(check_break_func, affichage=True):
                     if angleShoulder < 30 and upElement[indice] == False and wrist[1] < shoulder[1] and wrist[1] < elbow[1] and shoulder[1] < elbow[1]:
                         upElement[indice] = True
                         counter[indice]  += 1
+                        incr_les_activiters(indice, 1)
                 
                 # Calculer l'angle du bras et les répétitions
                 #-------------------------------------------------pour la main gauche------------------------------
@@ -129,6 +130,9 @@ def detectionBras(check_break_func, affichage=True):
                         counter[0]  -= 1
                         counter[1]  -= 1
                         counter[2]  += 1
+                        incr_les_activiters(0, -1)
+                        incr_les_activiters(1, -1)
+                        incr_les_activiters(2, 1)
                 else:
                     upElement[2] = False
 
@@ -139,7 +143,7 @@ def detectionBras(check_break_func, affichage=True):
                 if(affichage):
                     cv.imshow("mouvement", frame)
 
-            if cv.waitKey(1) == 27 or cv.waitKey(1) == ord('q') or check_break_func():
+            if cv.waitKey(1) == 27 or cv.waitKey(1) == ord('q'):
                 break
         else:
             break
@@ -151,6 +155,11 @@ def detectionBras(check_break_func, affichage=True):
 
     return counter
 
+def incr_les_activiters(activiter_id, val):
+    liste_act = lister_activiter_sans_fin(activiter_id)
+
+    for date_debut, id_personne, id_nom_action, _, compte in liste_act:
+        mettre_a_jour_activite(id_personne, id_nom_action, date_debut, compte + val)
 
 
 #counter = detectionBras(check_break_func, affichage=True)

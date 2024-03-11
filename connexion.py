@@ -57,6 +57,17 @@ def lister_activiter_sans_fin():
 
     return mycursor.fetchall()
 
+def lister_activiter_sans_fin(id_action):
+    sql = """
+    SELECT *
+    FROM activiter
+    WHERE (date_fin IS NULL OR date_fin = 0) AND id_nom_action = %s
+    """
+
+    mycursor.execute(sql, (id_action))
+
+    return mycursor.fetchall()
+
 
 def arreter_activiter(id_personne, id_nom_action, date_debut):
     
@@ -73,6 +84,15 @@ def arreter_activiter(id_personne, id_nom_action, date_debut):
     mycursor.execute(sql, (nouvelle_date_fin, id_personne, id_nom_action, date_debut))
 
     # Commit des changements
+    mydb.commit()
+
+def mettre_a_jour_activite(id_personne, id_nom_action, date_debut, compte):
+
+    sql = """UPDATE activiter 
+             SET compte = %s
+             WHERE id_personne = %s AND id_nom_action = %s AND date_debut = %s
+           """
+    mycursor.execute(sql, (compte, id_personne, id_nom_action, date_debut))              
     mydb.commit()
 
 def lister_activity():
@@ -120,7 +140,7 @@ def lister_activity_personne(id_personne):
     WHERE
         activiter.id_personne = %s 
     """
-   # Exécution de la requête
+    # Exécution de la requête
     mycursor.execute(sql, (id_personne,))
     # recupération des resultat
     result = mycursor.fetchall()
@@ -133,5 +153,5 @@ def lister_activity_personne(id_personne):
 #results = lister_activity_personne(1)
 #print(results)
 
-date_debut, id_personne, id_activiter,_ , _ = lister_activiter_sans_fin()[0]
-arreter_activiter(id_personne, id_activiter, date_debut)
+#date_debut, id_personne, id_activiter,_ , _ = lister_activiter_sans_fin()[0]
+#arreter_activiter(id_personne, id_activiter, date_debut)
