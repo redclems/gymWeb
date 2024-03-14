@@ -37,11 +37,10 @@ if ($conn->connect_error) {
             }
         }
         
-        // Stocker l'ID de d dans la session
+        // Stocker l'ID de dans la session
         $_SESSION['id_personne'] = $person_id;
-        
         $_SESSION['activity_id'] = $activity_id;
-        $_SESSION['date_debut'] = $date_debut;
+        $_SESSION['date_debut']  = $date_debut;
         //
 
         // Insérer l'activité dans la table "activiter"
@@ -55,21 +54,22 @@ if ($conn->connect_error) {
     }
 
     // Si le bouton stop est cliqué
-    if(isset($_POST['stop_activity'])){
+    if(isset($_POST['activity_id']) && isset($_POST['person_id']) && isset($_POST['date_debut'])){
         $activity_id = $_POST['activity_id'];
+        $person_id = $_POST['person_id'];
+        $date_debut = $_POST['date_debut'];
         $date_fin = date('Y-m-d H:i:s');
         
-        $sql = "UPDATE activites SET date_fin='$date_fin' WHERE id='$activity_id'";
+        $sql = "UPDATE activiter SET date_fin='$date_fin' 
+                WHERE id_personne='$activity_id' AND id_nom_action='$activity_id' AND date_debut='$date_debut'";
         if ($conn->query($sql) === TRUE) {
-            echo "Activité arrêtée avec succès.";
+            echo "<h3>Activité arrêtée avec succès.</h3>";
         } else {
             echo "Erreur: " . $sql . "<br>" . $conn->error;
         }
     }
 }
 ?>
-
-
 
 <!DOCTYPE html>
 
@@ -84,19 +84,23 @@ if ($conn->connect_error) {
     <h1>Gestion des activités</h1>
 	
     <?php
-    
+
+    $nom    = null;
+    $prenom = null;
+
     // Si la session person_id est définie, afficher les informations de la personne
-    if(isset($_SESSION['person_id'])){
-        $person_id = $_SESSION['person_id'];
+    if(isset($_SESSION['id_personne']) && $conn){
+        $person_id = $_SESSION['id_personne'];
         $sql = "SELECT nom, prenom FROM personne WHERE id='$person_id'";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
+
+            $nom    = $row['nom'];
+            $prenom = $row['prenom'];
             echo "<p>Personne: " . $row['prenom'] . " " . $row['nom'] . "</p>";
         }
     }
-    
-
     ?>
 
     <!-- Formulaire pour sélectionner une activité -->
@@ -104,24 +108,36 @@ if ($conn->connect_error) {
       <h2>Créer une activitée</h2>
       <form class="form" method="post">
         <div class="user-box">
-          <input type="text" placeholder="Nom" class="form__input" id="Nom" required/>
+          <input type="text" placeholder="Nom" class="form__input" id="Nom" required
+          <?php if (isset($nom) && $nom !== null) {
+             echo "value='" . $nom . "'";
+          } ?>
+          />
           <label for="Nom" class="form__label">Nom</label>
         </div>
         <div class="user-box">
-          <input type="text" placeholder="Prenom" class="form__input" id="Prenom" required/>
+          <input type="text" placeholder="Prenom" class="form__input" id="Prenom" required
+          <?php if (isset($prenom) && $prenom !== null) {
+             echo "value='" . $prenom . "'";
+          } ?>
+          />
           <label for="Prenom" class="form__label">Prenom</label>
+
         </div>
 
         <div class="user-box custom-select">
           <select name="activiter" id="choose_activiter">
             <?php
-                $sql = "SELECT * FROM nom_action";
-                $result = $conn->query($sql);
-                if ($result->num_rows > 0) {
-                    while($row = $result->fetch_assoc()) {
-                        echo "<option value='" . $row['id'] . "'>" . $row['nom'] . "</option>";
+                if($conn){
+                    $sql = "SELECT * FROM nom_action";
+                    $result = $conn->query($sql);
+                    if ($result->num_rows > 0) {
+                        while($row = $result->fetch_assoc()) {
+                            echo "<option value='" . $row['id'] . "'>" . $row['nom'] . "</option>";
+                        }
                     }
                 }
+                
             ?>
           </select>
         </div>
@@ -129,10 +145,15 @@ if ($conn->connect_error) {
         <input class="button button_start" type="submit" name="activity_submit" value="Lancer l'activité"/>
       </form>
       <!-- Bouton pour arrêter l'activité -->
+      <?php
+      if($conn && isset($_POST['activity_id']) && isset($_POST['person_id']) && isset($_POST['date_debut'])){ ?>
         <form method="post">
-            <input type="hidden" name="activity_id" value="<?php echo $activity_id; ?>">
+            <input type="hidden" name="activity_id" value="<?= $activity_id; ?>">
+            <input type="hidden" name="person_id" value="<?= $person_id; ?>">
+            <input type="hidden" name="date_debut" value="<?= $date_debut; ?>">
             <input class="button button_stop" type="submit" name="stop_activity" value="Stop">
         </form>
+     <?php } ?>
     </div>
 
 

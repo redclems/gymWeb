@@ -5,5 +5,5 @@ $servername = "localhost";
 $username = "gymweb";
 $password = "sere";
 $dbname = "gymweb";
-
+echo "string";
 ?>
