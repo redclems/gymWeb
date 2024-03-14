@@ -9,11 +9,11 @@ if ($conn->connect_error) {
     echo "Connection failed: " . $conn->connect_error;
 }else{
     // Si le formulaire de lancement d'activité est soumis
-    if(isset($_POST['activity_submit'])){
-        $nom = $_POST['nom'];
-        $prenom = $_POST['prenom'];
-    	$date_debut = date('Y-m-d H:i:s');
-        $activity_id = $_POST['activity'];
+    if(isset($_POST['nom']) && isset($_POST['prenom']) && isset($_POST['activiter'])){
+        $nom         = $_POST['nom'];
+        $prenom      = $_POST['prenom'];
+    	$date_debut  = date('Y-m-d H:i:s');
+        $activity_id = $_POST['activiter'];
         
 
         // Vérifier si la personne existe déjà dans la table
@@ -108,20 +108,20 @@ if ($conn->connect_error) {
       <h2>Créer une activitée</h2>
       <form class="form" method="post">
         <div class="user-box">
-          <input type="text" placeholder="Nom" class="form__input" id="Nom" required
+          <input type="text" name="nom" placeholder="Nom" class="form__input" id="nom" required
           <?php if (isset($nom) && $nom !== null) {
              echo "value='" . $nom . "'";
           } ?>
           />
-          <label for="Nom" class="form__label">Nom</label>
+          <label for="nom" class="form__label">Nom</label>
         </div>
         <div class="user-box">
-          <input type="text" placeholder="Prenom" class="form__input" id="Prenom" required
+          <input type="text" name="prenom" placeholder="Prénom" class="form__input" id="prenom" required
           <?php if (isset($prenom) && $prenom !== null) {
              echo "value='" . $prenom . "'";
           } ?>
           />
-          <label for="Prenom" class="form__label">Prenom</label>
+          <label for="prenom" class="form__label">Prénom</label>
 
         </div>
 
@@ -148,10 +148,10 @@ if ($conn->connect_error) {
       <?php
       if($conn && isset($_POST['activity_id']) && isset($_POST['person_id']) && isset($_POST['date_debut'])){ ?>
         <form method="post">
-            <input type="hidden" name="activity_id" value="<?= $activity_id; ?>">
-            <input type="hidden" name="person_id" value="<?= $person_id; ?>">
-            <input type="hidden" name="date_debut" value="<?= $date_debut; ?>">
-            <input class="button button_stop" type="submit" name="stop_activity" value="Stop">
+            <input type="hidden" name="activity_id" value="<?= $activity_id ?>"/>
+            <input type="hidden" name="person_id" value="<?= $person_id ?>"/>
+            <input type="hidden" name="date_debut" value="<?= $date_debut ?>"/>
+            <input class="button button_stop" type="submit" name="stop_activity" value="Stop"/>
         </form>
      <?php } ?>
     </div>
@@ -168,5 +168,7 @@ if ($conn->connect_error) {
 
 <?php
 // Fermer la connexion à la base de données
-$conn->close();
+if($conn){
+    $conn->close();
+}
 ?>
