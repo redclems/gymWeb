@@ -6,7 +6,7 @@ require './connect.php';
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 if ($conn->connect_error) {
-    echo "Connection failed: " . $conn->connect_error;
+    echo "<div class='error-box'> Connection failed: " . $conn->connect_error . "</div>";
 }else{
     // Si le formulaire de lancement d'activité est soumis
     if(isset($_POST['nom']) && isset($_POST['prenom']) && isset($_POST['activiter'])){
@@ -31,7 +31,7 @@ if ($conn->connect_error) {
                 // Récupérer l'ID de la personne nouvellement créée
                 $person_id = $conn->insert_id;
             } else {
-                echo "Erreur lors de la création de la personne: " . $conn->error;
+                echo "<div class='error-box'> Erreur lors de la création de la personne: " . $conn->error . "</div>";
                 // Terminer l'exécution ou gérer l'erreur selon vos besoins
                 exit;
             }
@@ -46,12 +46,12 @@ if ($conn->connect_error) {
         // Insérer l'activité dans la table "activiter"
         $sql = "INSERT INTO activiter (id_personne, id_nom_action, date_debut) VALUES ('$person_id', '$activity_id', '$date_debut')";
         if ($conn->query($sql) === TRUE) {
-            echo "Activité lancée avec succès.";
+            echo "<div class='success-box'> Activité lancée avec succès.</div>";
             
         } else {
-            echo "Erreur lors de l'insertion de l'activité: " . $conn->error;
+            echo "<div class='error-box'>Erreur lors de l'insertion de l'activité: " . $conn->error . "</div>";
         }
-        echo "<p>" . $_SESSION['id_personne'] . " : " . $_SESSION['activity_id'] . " : " . $_SESSION['date_debut'];
+        //echo "<p>" . $_SESSION['id_personne'] . " : " . $_SESSION['activity_id'] . " : " . $_SESSION['date_debut'];
     }
 
     // Si le bouton stop est cliqué
@@ -64,10 +64,12 @@ if ($conn->connect_error) {
         $sql = "UPDATE activiter SET date_fin='$date_fin' 
                 WHERE id_personne='$activity_id' AND id_nom_action='$activity_id' AND date_debut='$date_debut'";
         if ($conn->query($sql) === TRUE) {
-            echo "<h3>Activité arrêtée avec succès.</h3>";
+            echo "<div class='error-box'>Activité arrêtée avec succès.</div>";
         } else {
-            echo "Erreur: " . $sql . "<br>" . $conn->error;
+            echo "<div class='error-box'>Erreur: " . $sql . "<br>" . $conn->error . "</div>";
         }
+        $_SESSION['activity_id'] = null;
+        $_SESSION['date_debut'] = null;
     }
 }
 ?>
@@ -89,7 +91,7 @@ if ($conn->connect_error) {
     $nom    = null;
     $prenom = null;
 
-    // Si la session person_id est définie, afficher les informations de la personne
+    // Si la session person_id est définie
     if(isset($_SESSION['id_personne']) && $conn){
         $person_id = $_SESSION['id_personne'];
         $sql = "SELECT nom, prenom FROM personne WHERE id='$person_id'";
@@ -103,6 +105,24 @@ if ($conn->connect_error) {
         }
     }
     ?>
+
+    </form>
+      <!-- Bouton pour arrêter l'activité -->
+      <?php
+      if($conn 
+        && isset($_SESSION['id_personne']) && $_SESSION['id_personne'] !== null 
+        && isset($_SESSION['activity_id']) && $_SESSION['activity_id'] !== null 
+        && isset($_SESSION['date_debut']) && $_SESSION['date_debut'] !== null 
+        ){ ?>
+
+        <div class="chrono" id="chronometer">00:00:00</div>
+        <form method="post">
+            <input type="hidden" name="activity_id" value="<?= $activity_id ?>"/>
+            <input type="hidden" name="person_id" value="<?= $person_id ?>"/>
+            <input type="hidden" name="date_debut" value="<?= $date_debut ?>"/>
+            <input class="button button_stop" type="submit" name="stop_activity" value="Stop"/>
+        </form>
+     <?php } ?>
 
     <!-- Formulaire pour sélectionner une activité -->
     <div class="box container">
@@ -144,17 +164,6 @@ if ($conn->connect_error) {
         </div>
 
         <input class="button button_start" type="submit" name="activity_submit" value="Lancer l'activité"/>
-      </form>
-      <!-- Bouton pour arrêter l'activité -->
-      <?php
-      if($conn && isset($_POST['activity_id']) && isset($_POST['person_id']) && isset($_POST['date_debut'])){ ?>
-        <form method="post">
-            <input type="hidden" name="activity_id" value="<?= $activity_id ?>"/>
-            <input type="hidden" name="person_id" value="<?= $person_id ?>"/>
-            <input type="hidden" name="date_debut" value="<?= $date_debut ?>"/>
-            <input class="button button_stop" type="submit" name="stop_activity" value="Stop"/>
-        </form>
-     <?php } ?>
     </div>
 
 
@@ -173,3 +182,37 @@ if($conn){
     $conn->close();
 }
 ?>
+
+<script>
+var startTime;
+var elapsedTime = 0;
+var timerInterval;
+
+// Démarre le chronomètre lorsque la page se charge
+window.onload = function() {
+    startTime = Date.now() - elapsedTime;
+    timerInterval = setInterval(updateTime, 1000);
+};
+
+// Met à jour le temps affiché
+function updateTime() {
+    var elapsedTime = Date.now() - startTime;
+    var hours = Math.floor(elapsedTime / 3600000);
+    var minutes = Math.floor((elapsedTime % 3600000) / 60000);
+    var seconds = Math.floor((elapsedTime % 60000) / 1000);
+
+    // Formatage du temps pour afficher avec des zéros en tête
+    var formattedTime = 
+        (hours < 10 ? "0" : "") + hours + ":" +
+        (minutes < 10 ? "0" : "") + minutes + ":" +
+        (seconds < 10 ? "0" : "") + seconds;
+
+    document.getElementById("chronometer").textContent = formattedTime;
+}
+
+// Arrête le chronomètre lorsque la page se ferme
+window.onbeforeunload = function() {
+    clearInterval(timerInterval);
+};
+
+</script>

@@ -117,6 +117,29 @@ body {
   position: relative;
 }
 
+.error-box, .success-box{
+    border: 1px solid #d0e9c6;
+    padding: 1em;
+    margin-bottom: 1em;
+
+}
+
+.chrono{
+  margin: 1em;
+  font-size: 2em;
+  color: white;
+}
+
+.error-box{
+  background-color: #f2dede;
+  color: #a94442;
+}
+.success-box {
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+
+
 .user-box input {
   width: 100%;
   padding: 10px 0;
