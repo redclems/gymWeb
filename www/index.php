@@ -100,7 +100,7 @@ if ($conn->connect_error) {
     ?>
 
     <!-- Formulaire pour sélectionner une activité -->
-    <div class="box">
+    <div class="box container">
       <h2>Créer une activitée</h2>
       <form class="form" method="post">
         <div class="user-box">

@@ -18,13 +18,13 @@
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
-                echo "<li class='table-row'>"
-                  echo "<div class='col col-1'>" . $row['prenom_personne'] . " " . $row['nom_personne'] . "</div>"
-                  echo "<div class='col col-2'>" . $row['nom_action'] . "</div>"
-                  echo "<div class='col col-3'>" . $row['date_debut'] . "</div>"
-                  echo "<div class='col col-4'>" . $row['date_fin'] . "</div>"
-                  echo "<div class='col col-5'>" . $row['compte'] . "</div>"
-                echo "</li>"
+                echo "<li class='table-row'>";
+                  echo "<div class='col col-1'>" . $row['prenom_personne'] . " " . $row['nom_personne'] . "</div>";
+                  echo "<div class='col col-2'>" . $row['nom_action'] . "</div>";
+                  echo "<div class='col col-3'>" . $row['date_debut'] . "</div>";
+                  echo "<div class='col col-4'>" . $row['date_fin'] . "</div>";
+                  echo "<div class='col col-5'>" . $row['compte'] . "</div>";
+                echo "</li>";
             }
         }
         ?>
