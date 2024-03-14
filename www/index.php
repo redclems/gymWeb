@@ -55,7 +55,7 @@ if ($conn->connect_error) {
         // Insérer l'activité dans la table "activiter"
         $sql = "INSERT INTO activiter (id_personne, id_nom_action, date_debut) VALUES ('$person_id', '$activity_id', '$date_debut')";
         if ($conn->query($sql) === TRUE) {
-            echo "<div class='success-box'> Activité lancée avec succès.</div>";
+            echo "<div class='success-box'> Activité lancée avec succès par l'utilisateur " . $person_id . " .</div>";
             
         } else {
             echo "<div class='error-box'>Erreur lors de l'insertion de l'activité: " . $conn->error . "</div>";
@@ -71,10 +71,10 @@ if ($conn->connect_error) {
         $date_fin = date('Y-m-d H:i:s');
         
         echo "UPDATE activiter SET date_fin='$date_fin' 
-                WHERE id_personne='$activity_id' AND id_nom_action='$activity_id' AND date_debut='$date_debut' AND date_fin IS NULL";
+                WHERE id_personne='$person_id' AND id_nom_action='$activity_id' AND date_debut='$date_debut' AND date_fin IS NULL";
 
         $sql = "UPDATE activiter SET date_fin='$date_fin' 
-                WHERE id_personne='$activity_id' AND id_nom_action='$activity_id' AND date_debut='$date_debut' AND date_fin IS NULL";
+                WHERE id_personne='$person_id' AND id_nom_action='$activity_id' AND date_debut='$date_debut' AND date_fin IS NULL";
 
         if ($conn->query($sql) === TRUE) {
             if ($conn->affected_rows > 0) {
