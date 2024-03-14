@@ -55,6 +55,15 @@ def creer_activity(id_personne, id_nom_action):
     # Affichage d'un message de confirmation
     print(mycursor.rowcount, "enregistrement inséré.")
 
+def get_nom_activiter_par_id(id_activiter):
+    sql = "SELECT nom FROM nom_action WHERE id = %s"
+    mycursor.execute(sql, (id_activiter,))
+
+    result = mycursor.fetchone()
+    if result:
+        return result[0]
+    else:
+        return None
 
 def lister_activiter_sans_fin():
     sql = """

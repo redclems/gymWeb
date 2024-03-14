@@ -153,25 +153,33 @@ def detectionBras(affichage=True):
     return counter
 
 from connexion import lister_activiter_sans_fin_id, mettre_a_jour_activite
-from sendNotification import send_activity_notification
+from sendNotification import send_end_activity_notification, send_start_activity_notification
 
 liste_save_act = None
 def incr_les_activiters(activiter_id, val):
     global liste_save_act
     liste_act = lister_activiter_sans_fin_id(activiter_id)
-    #recuperer les ellement dans une liste qui ne sont pas dans liste_act mais compris dans liste_save_act
+    #recuperer les elements dans une liste qui ne sont pas dans liste_act mais compris dans liste_save_act
 
     if liste_save_act is not None:
-        elements_manquants = [element for element in liste_save_act if element not in liste_act]
+        elements_manquants = [element for element in liste_save_act[activiter_id] if element not in liste_act]
 
         for date_debut, id_personne, id_nom_action, date_fin, compte in elements_manquants:
-           send_activity_notification(date_debut, id_personne, id_nom_action, date_fin, compte)
+           send_end_activity_notification(date_debut, id_personne, id_nom_action, date_fin, compte)
+
+    if liste_act is not None:
+        elements_manquants = [element for element in liste_act if element not in liste_save_act[activiter_id]]
+
+        for date_debut, id_personne, id_nom_action, date_fin, compte in elements_manquants:
+           send_start_activity_notification(date_debut, id_personne, id_nom_action)
+
 
     if (liste_act is not None):
         for date_debut, id_personne, id_nom_action, _, compte in liste_act:
             mettre_a_jour_activite(id_personne, id_nom_action, date_debut, compte + val)
 
-    liste_save_act = liste_act
+
+    liste_save_act[activiter_id] = liste_act
 
 counter = detectionBras( affichage=True)
 print(counter)
