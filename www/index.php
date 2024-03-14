@@ -51,6 +51,7 @@ if ($conn->connect_error) {
         } else {
             echo "Erreur lors de l'insertion de l'activité: " . $conn->error;
         }
+        echo "<p>" . $_SESSION['id_personne'] . " : " . $_SESSION['activity_id'] . " : " . $_SESSION['date_debut'];
     }
 
     // Si le bouton stop est cliqué
@@ -98,7 +99,7 @@ if ($conn->connect_error) {
 
             $nom    = $row['nom'];
             $prenom = $row['prenom'];
-            echo "<p>Personne: " . $row['prenom'] . " " . $row['nom'] . "</p>";
+            //echo "<p>Personne: " . $row['prenom'] . " " . $row['nom'] . "</p>";
         }
     }
     ?>

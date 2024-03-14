@@ -20,7 +20,7 @@
             while($row = $result->fetch_assoc()) {
                 ?>
                     <li class='table-row'>
-                        <div class='col col-1'><?=$row['prenom_personne'] ?> <?= $row['nom_personne'] ?></div>";
+                        <div class='col col-1'><?=$row['prenom_personne'] ?> <?= $row['nom_personne'] ?></div>
                         <div class='col col-2'><?= $row['nom_action'] ?></div>
                         <div class='col col-3'><?= $row['date_debut'] ?></div>
                         <div class='col col-4'><?= $row['date_fin'] ?></div>
