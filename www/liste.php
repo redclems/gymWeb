@@ -14,7 +14,8 @@
         $sql = "SELECT personne.nom AS nom_personne, personne.prenom AS prenom_personne, nom_action.nom AS nom_action, activiter.date_debut, activiter.date_fin, activiter.compte AS compte
                 FROM activiter
                 INNER JOIN personne ON activiter.id_personne = personne.id 
-                INNER JOIN nom_action ON activiter.id_nom_action = nom_action.id";
+                INNER JOIN nom_action ON activiter.id_nom_action = nom_action.id
+                ORDER BY activiter.date_debut DESC";
         $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {

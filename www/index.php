@@ -64,7 +64,7 @@ if ($conn->connect_error) {
         $sql = "UPDATE activiter SET date_fin='$date_fin' 
                 WHERE id_personne='$activity_id' AND id_nom_action='$activity_id' AND date_debut='$date_debut'";
         if ($conn->query($sql) === TRUE) {
-            echo "<div class='error-box'>Activité arrêtée avec succès.</div>";
+            echo "<div class='success-box'>Activité arrêtée avec succès.</div>";
         } else {
             echo "<div class='error-box'>Erreur: " . $sql . "<br>" . $conn->error . "</div>";
         }
@@ -105,8 +105,8 @@ if ($conn->connect_error) {
         }
     }
     ?>
-
-    </form>
+    <div class="container">
+      </form>
       <!-- Bouton pour arrêter l'activité -->
       <?php
       if($conn 
@@ -123,6 +123,7 @@ if ($conn->connect_error) {
             <input class="button button_stop" type="submit" name="stop_activity" value="Stop"/>
         </form>
      <?php } ?>
+    </div>
 
     <!-- Formulaire pour sélectionner une activité -->
     <div class="box container">
