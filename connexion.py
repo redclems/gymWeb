@@ -29,6 +29,16 @@ def creer_personne(nom, prenom):
 
     print(mycursor.rowcount, "record inserted.")
 
+def get_nom_prenom_par_id(id_personne):
+    sql = "SELECT nom, prenom FROM personne WHERE id = %s"
+    mycursor.execute(sql, (id_personne,))
+
+    result = mycursor.fetchone()
+    if result:
+        return result[0], result[1]
+    else:
+        return None, None
+
 def creer_activity(id_personne, id_nom_action):
     # Définition des données à insérer
     now = datetime.now()

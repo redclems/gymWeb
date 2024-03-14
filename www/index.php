@@ -55,12 +55,11 @@ if ($conn->connect_error) {
         // Insérer l'activité dans la table "activiter"
         $sql = "INSERT INTO activiter (id_personne, id_nom_action, date_debut) VALUES ('$person_id', '$activity_id', '$date_debut')";
         if ($conn->query($sql) === TRUE) {
-            echo "<div class='success-box'> Activité lancée avec succès par l'utilisateur " . $person_id . " .</div>";
+            echo "<div class='success-box'> Activité lancée avec succès.</div>";
             
         } else {
             echo "<div class='error-box'>Erreur lors de l'insertion de l'activité: " . $conn->error . "</div>";
         }
-        //echo "<p>" . $_SESSION['id_personne'] . " : " . $_SESSION['activity_id'] . " : " . $_SESSION['date_debut'];
     }
 
     // Si le bouton stop est cliqué
@@ -110,12 +109,9 @@ if ($conn->connect_error) {
 
             $nom    = $row['nom'];
             $prenom = $row['prenom'];
-            //echo "<p>Personne: " . $row['prenom'] . " " . $row['nom'] . "</p>";
         }
     }
     ?>
-    <div class="container">
-      </form>
       <!-- Bouton pour arrêter l'activité -->
       <?php
       if($conn 
@@ -123,17 +119,20 @@ if ($conn->connect_error) {
         && isset($_SESSION['activity_id']) && $_SESSION['activity_id'] !== null 
         && isset($_SESSION['date_debut']) && $_SESSION['date_debut'] !== null 
         ){ ?>
-
-        <div class="chrono" id="chronometer">00:00:00</div>
-        <form method="post">
-            <input type="hidden" name="activity_id" value="<?= $activity_id ?>"/>
-            <input type="hidden" name="person_id" value="<?= $person_id ?>"/>
-            <input type="hidden" name="date_debut" value="<?= $date_debut ?>"/>
-            <input class="button button_stop" type="submit" name="stop_activity" value="Stop"/>
-        </form>
+        <div class="container">
+            <h2>activitée en cours :</h2>
+            <div class="chrono" id="chronometer">00:00:00</div>
+            <form method="post">
+                <input type="hidden" name="activity_id" value="<?= $activity_id ?>"/>
+                <input type="hidden" name="person_id"   value="<?= $person_id ?>"/>
+                <input type="hidden" name="date_debut"  value="<?= $date_debut ?>"/>
+                <input class="button button_stop" type="submit" name="stop_activity" value="Stop"/>
+            </form>
+        </div>
      <?php } else { ?>
 
     <!-- Formulaire pour sélectionner une activité -->
+    <div class="container">
       <h2>Créer une activitée</h2>
       <form class="form" method="post">
         <div class="user-box">

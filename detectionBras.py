@@ -151,13 +151,27 @@ def detectionBras(affichage=True):
     cv.destroyAllWindows()
 
     return counter
+
 from connexion import lister_activiter_sans_fin_id, mettre_a_jour_activite
+from sendNotification import notifActiviterFini
+
+liste_save_act = None
 def incr_les_activiters(activiter_id, val):
+    global liste_save_act
     liste_act = lister_activiter_sans_fin_id(activiter_id)
+    #recuperer les ellement dans une liste qui ne sont pas dans liste_act mais compris dans liste_save_act
+
+    if liste_save_act is not None:
+        elements_manquants = [element for element in liste_save_act if element not in liste_act]
+
+        for date_debut, id_personne, id_nom_action, date_fin, compte in elements_manquants:
+            notifActiviterFini(date_debut, id_personne, id_nom_action, date_fin, compte)
+
     if (liste_act is not None):
         for date_debut, id_personne, id_nom_action, _, compte in liste_act:
             mettre_a_jour_activite(id_personne, id_nom_action, date_debut, compte + val)
 
+    liste_save_act = liste_act
 
 counter = detectionBras( affichage=True)
 print(counter)
