@@ -153,7 +153,7 @@ def detectionBras(affichage=True):
     return counter
 
 from connexion import lister_activiter_sans_fin_id, mettre_a_jour_activite
-from sendNotification import notifActiviterFini
+from sendNotification import send_activity_notification
 
 liste_save_act = None
 def incr_les_activiters(activiter_id, val):
@@ -165,7 +165,7 @@ def incr_les_activiters(activiter_id, val):
         elements_manquants = [element for element in liste_save_act if element not in liste_act]
 
         for date_debut, id_personne, id_nom_action, date_fin, compte in elements_manquants:
-            notifActiviterFini(date_debut, id_personne, id_nom_action, date_fin, compte)
+           send_activity_notification(date_debut, id_personne, id_nom_action, date_fin, compte)
 
     if (liste_act is not None):
         for date_debut, id_personne, id_nom_action, _, compte in liste_act:
