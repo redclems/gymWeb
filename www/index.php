@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des activités</title>
+    <link rel="stylesheet" href="./style/styles.css">
+</head>
 <?php
 session_start();
 
@@ -61,6 +70,9 @@ if ($conn->connect_error) {
         $date_debut = $_POST['date_debut'];
         $date_fin = date('Y-m-d H:i:s');
         
+        echo "UPDATE activiter SET date_fin='$date_fin' 
+                WHERE id_personne='$activity_id' AND id_nom_action='$activity_id' AND date_debut='$date_debut' AND date_fin IS NULL";
+
         $sql = "UPDATE activiter SET date_fin='$date_fin' 
                 WHERE id_personne='$activity_id' AND id_nom_action='$activity_id' AND date_debut='$date_debut' AND date_fin IS NULL";
 
@@ -80,16 +92,6 @@ if ($conn->connect_error) {
     }
 }
 ?>
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des activités</title>
-    <link rel="stylesheet" href="./style/styles.css">
-</head>
 <body>
     <h1>Gestion des activités</h1>
 	
@@ -135,20 +137,20 @@ if ($conn->connect_error) {
       <h2>Créer une activitée</h2>
       <form class="form" method="post">
         <div class="user-box">
+          <label for="nom" class="form__label">Nom</label>
           <input type="text" name="nom" placeholder="Nom" class="form__input" id="nom" required
           <?php if (isset($nom) && $nom !== null) {
              echo "value='" . $nom . "'";
           } ?>
           />
-          <label for="nom" class="form__label">Nom</label>
         </div>
         <div class="user-box">
+          <label for="prenom" class="form__label">Prénom</label>
           <input type="text" name="prenom" placeholder="Prénom" class="form__input" id="prenom" required
           <?php if (isset($prenom) && $prenom !== null) {
              echo "value='" . $prenom . "'";
           } ?>
           />
-          <label for="prenom" class="form__label">Prénom</label>
 
         </div>
 
@@ -180,12 +182,11 @@ if ($conn->connect_error) {
 </html>
 
 <?php
-// Fermer la connexion à la base de données
-if($conn){
-    $conn->close();
-}
-?>
-
+if($conn 
+    && isset($_SESSION['id_personne']) && $_SESSION['id_personne'] !== null 
+    && isset($_SESSION['activity_id']) && $_SESSION['activity_id'] !== null 
+    && isset($_SESSION['date_debut']) && $_SESSION['date_debut'] !== null 
+    ){ ?>
 <script>
 var startTime;
 var elapsedTime = 0;
@@ -219,3 +220,11 @@ window.onbeforeunload = function() {
 };
 
 </script>
+
+<?php
+}
+// Fermer la connexion à la base de données
+if($conn){
+    $conn->close();
+}
+?>
