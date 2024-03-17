@@ -118,9 +118,9 @@ def detectionBras(affichage=True):
                 
                 # Calculer l'angle du bras et les répétitions
                 #-------------------------------------------------pour la main gauche------------------------------
-                angleShoulder(shoulder_left, elbow_left, wrist_left, 0)
+                angleShoulder(shoulder_left, elbow_left, wrist_left, 1)
                 #---------------------------------------------------pour la main droite--------------------------
-                angleShoulder(shoulder_right, elbow_right, wrist_right, 1)
+                angleShoulder(shoulder_right, elbow_right, wrist_right, 0)
                 #--------------------------------------------------Pour les deux mains----------------------------
                 if upElement[0] and upElement[1]:
                     if(upElement[2] == False):
@@ -155,31 +155,30 @@ def detectionBras(affichage=True):
 from connexion import lister_activiter_sans_fin_id, mettre_a_jour_activite
 from sendNotification import send_end_activity_notification, send_start_activity_notification
 
-liste_save_act = None
+liste_save_act = {}  # Initialize liste_save_act as an empty dictionary
 def incr_les_activiters(activiter_id, val):
+    activiter_id += 1
     global liste_save_act
+    
+    # Retrieve current activities
     liste_act = lister_activiter_sans_fin_id(activiter_id)
-    #recuperer les elements dans une liste qui ne sont pas dans liste_act mais compris dans liste_save_act
+    print(activiter_id)
+    # Check for elements missing from liste_act that were in liste_save_act
+    if activiter_id in liste_save_act:
+        missing_elements = [element for element in liste_save_act[activiter_id] if element not in liste_act]
+        for date_debut, id_personne, id_nom_action, date_fin, compte in missing_elements:
+            send_end_activity_notification(date_debut, id_personne, id_nom_action, date_fin, compte)
 
-    if liste_save_act is not None:
-        elements_manquants = [element for element in liste_save_act[activiter_id] if element not in liste_act]
+    # Check for elements missing from liste_save_act that are in liste_act
+    if liste_act:
+        missing_elements = [element for element in liste_act if element not in liste_save_act.get(activiter_id, [])]
+        for date_debut, id_personne, id_nom_action, date_fin, compte in missing_elements:
+            send_start_activity_notification(date_debut, id_personne, id_nom_action)
 
-        for date_debut, id_personne, id_nom_action, date_fin, compte in elements_manquants:
-           send_end_activity_notification(date_debut, id_personne, id_nom_action, date_fin, compte)
+    # Update activities and save them in liste_save_act
+    for date_debut, id_personne, id_nom_action, _, compte in liste_act:
+        mettre_a_jour_activite(id_personne, id_nom_action, date_debut, compte + val)
 
-    if liste_act is not None:
-        elements_manquants = [element for element in liste_act if element not in liste_save_act[activiter_id]]
-
-        for date_debut, id_personne, id_nom_action, date_fin, compte in elements_manquants:
-           send_start_activity_notification(date_debut, id_personne, id_nom_action)
-
-
-    if (liste_act is not None):
-        for date_debut, id_personne, id_nom_action, _, compte in liste_act:
-            mettre_a_jour_activite(id_personne, id_nom_action, date_debut, compte + val)
-
-
-    liste_save_act[activiter_id] = liste_act
-
+    liste_save_act[activiter_id] = liste_act  # Save the updated activities for the activiter_id
 counter = detectionBras( affichage=True)
 print(counter)
