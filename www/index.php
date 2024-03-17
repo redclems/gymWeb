@@ -122,7 +122,7 @@ if ($conn->connect_error) {
         <div class="container">
             <h2>activitée en cours :</h2>
             <div class="chrono" id="chronometer">00:00:00</div>
-            <form method="post">
+            <form method="post" class = "form_chrono">
                 <input type="hidden" name="activity_id" value="<?= $activity_id ?>"/>
                 <input type="hidden" name="person_id"   value="<?= $person_id ?>"/>
                 <input type="hidden" name="date_debut"  value="<?= $date_debut ?>"/>
