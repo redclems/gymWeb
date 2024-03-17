@@ -81,11 +81,13 @@ def on_closing():
 
 def detectionBras(affichage=True):
     counter = [0] * 3
+    counterTampon = [0] * 3
     upElement = [True] * 3 
 
     cap = cv.VideoCapture(0)
     registerData = True
 
+    tempVerifFinActiviter = 0;
     # Boucle principale
     while registerData and cap.isOpened():
         ret, frame = cap.read()
@@ -114,7 +116,7 @@ def detectionBras(affichage=True):
                     if angleShoulder < 30 and upElement[indice] == False and wrist[1] < shoulder[1] and wrist[1] < elbow[1] and shoulder[1] < elbow[1]:
                         upElement[indice] = True
                         counter[indice]  += 1
-                        incr_les_activiters(indice, 1)
+                        counterTampon[indice] += 1
                 
                 # Calculer l'angle du bras et les répétitions
                 #-------------------------------------------------pour la main gauche------------------------------
@@ -128,13 +130,20 @@ def detectionBras(affichage=True):
                         counter[0]  -= 1
                         counter[1]  -= 1
                         counter[2]  += 1
-                        incr_les_activiters(2, 1)
+                        counterTampon[0] -= 1
+                        counterTampon[1] -= 1
+                        counterTampon[2] += 1
                 else:
                     upElement[2] = False
 
                 if(affichage):
                     visualizeAngle(newframe, counter, upElement)
                     cv.imshow("mouvement", newframe)
+
+                if tempVerifFinActiviter > 10:
+                    for i in range(0,3, 1):
+                        incr_les_activiters(i, counterTampon[i])
+                        counterTampon[i] = 0;
             else:
                 if(affichage):
                     cv.imshow("mouvement", frame)
@@ -162,22 +171,27 @@ def incr_les_activiters(activiter_id, val):
     
     # Retrieve current activities
     liste_act = lister_activiter_sans_fin_id(activiter_id)
-    print(activiter_id)
-    # Check for elements missing from liste_act that were in liste_save_act
+    print(liste_act)
+
     if activiter_id in liste_save_act:
         missing_elements = [element for element in liste_save_act[activiter_id] if element not in liste_act]
+        print("end act : ", missing_elements)
         for date_debut, id_personne, id_nom_action, date_fin, compte in missing_elements:
             send_end_activity_notification(date_debut, id_personne, id_nom_action, date_fin, compte)
 
-    # Check for elements missing from liste_save_act that are in liste_act
+
     if liste_act:
         missing_elements = [element for element in liste_act if element not in liste_save_act.get(activiter_id, [])]
+        print("start act : ", missing_elements)
         for date_debut, id_personne, id_nom_action, date_fin, compte in missing_elements:
             send_start_activity_notification(date_debut, id_personne, id_nom_action)
+
 
     # Update activities and save them in liste_save_act
     for date_debut, id_personne, id_nom_action, _, compte in liste_act:
         mettre_a_jour_activite(id_personne, id_nom_action, date_debut, compte + val)
+        print("activiter ", id_nom_action, " inc de ", val)
+
 
     liste_save_act[activiter_id] = liste_act  # Save the updated activities for the activiter_id
 counter = detectionBras( affichage=True)
