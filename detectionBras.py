@@ -140,10 +140,12 @@ def detectionBras(affichage=True):
                     visualizeAngle(newframe, counter, upElement)
                     cv.imshow("mouvement", newframe)
 
-                if tempVerifFinActiviter > 10:
+                if tempVerifFinActiviter > 150:
                     for i in range(0,3, 1):
                         incr_les_activiters(i, counterTampon[i])
-                        counterTampon[i] = 0;
+                        counterTampon[i] = 0
+                    tempVerifFinActiviter = 0
+                tempVerifFinActiviter += 1
             else:
                 if(affichage):
                     cv.imshow("mouvement", frame)
@@ -182,7 +184,7 @@ def incr_les_activiters(activiter_id, val):
 
     if liste_act:
         missing_elements = [element for element in liste_act if element not in liste_save_act.get(activiter_id, [])]
-        print("start act : ", missing_elements)
+        #print("start act : ", missing_elements)
         for date_debut, id_personne, id_nom_action, date_fin, compte in missing_elements:
             send_start_activity_notification(date_debut, id_personne, id_nom_action)
 
@@ -190,9 +192,9 @@ def incr_les_activiters(activiter_id, val):
     # Update activities and save them in liste_save_act
     for date_debut, id_personne, id_nom_action, _, compte in liste_act:
         mettre_a_jour_activite(id_personne, id_nom_action, date_debut, compte + val)
-        print("activiter ", id_nom_action, " inc de ", val)
+        #print("activiter ", id_nom_action, " inc de ", val)
 
 
     liste_save_act[activiter_id] = liste_act  # Save the updated activities for the activiter_id
 counter = detectionBras( affichage=True)
-print(counter)
+#print(counter)

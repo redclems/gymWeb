@@ -2,7 +2,7 @@ from pushbullet import Pushbullet
 from connexion import get_nom_prenom_par_id, get_nom_activiter_par_id
 
 def send_notification(title, text):
-    pb = Pushbullet("o.WbJThRVA5C54lb3hi4BzrHCq27Z7ggeS")
+    pb = Pushbullet("o.E14cBXWVpuCfWa5UfwfPf3nKQQY0s5SV")
     push = pb.push_note(title, text)
 
 def send_end_activity_notification(date_debut, id_personne, id_nom_action, date_fin, compte):
